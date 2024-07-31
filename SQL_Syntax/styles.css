@@ -1,0 +1,100 @@
+/* styles.css */
+
+/* Global styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    margin-top: 20px;
+    padding: 0;
+    background-color: #0e1112; /* Màu nền dark của theme Ayu Dark */
+    color: #f0f0f0; /* Màu chữ của theme Ayu Dark */
+    overflow-x: hidden; /* Ngăn ngừa cuộn ngang */
+}
+
+header {
+    margin-bottom: 20px;
+}
+
+h1, h2 {
+    color: #ffb454; /* Màu tiêu đề chính của theme Ayu Dark */
+}
+
+code {
+    font-family: 'Monospace', monospace; /* Sử dụng font monospace cho mã code */
+    background-color: #1c1e1f; /* Màu nền code của theme Ayu Dark */
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: #ffb454; /* Màu chữ code của theme Ayu Dark */
+}
+
+pre {
+    font-family: 'Monospace', monospace; /* Sử dụng font monospace cho pre */
+    background-color: #1c1e1f; /* Màu nền pre của theme Ayu Dark */
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+    color: #f0f0f0; /* Màu chữ pre của theme Ayu Dark */
+}
+
+/* Table of Contents */
+nav#toc {
+    position: fixed; /* Đặt vị trí cố định */
+    top: 20px; /* Khoảng cách từ đầu trang */
+    left: 20px; /* Đặt lề trái */
+    width: 25%; /* Độ rộng của danh sách mục lục */
+    background-color: #0e1112; /* Màu nền của danh sách mục lục */
+    border-right: 1px solid #2d3233; /* Đường viền phân cách */
+    padding: 20px;
+    z-index: 1000; /* Đặt thứ tự sắp xếp lớn hơn nội dung chính */
+}
+
+nav#toc h2 {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    color: #ffb454; /* Màu tiêu đề danh sách mục lục */
+}
+
+nav#toc ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+nav#toc ul li {
+    margin: 10px 0;
+}
+
+nav#toc ul li a {
+    text-decoration: none;
+    color: #66d9ef; /* Màu liên kết của danh sách mục lục */
+    transition: color 0.3s;
+    display: block;
+}
+
+nav#toc ul li a:hover {
+    color: #f0f0f0; /* Màu hover của liên kết danh sách mục lục */
+}
+
+/* Main content */
+main {
+    margin-left: 30%; /* Để lại khoảng trống bên trái cho TOC */
+    padding: 20px;
+    color: #f0f0f0; /* Màu chữ của theme Ayu Dark */
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    nav#toc {
+        width: 100%; /* Điều chỉnh kích thước TOC cho màn hình nhỏ hơn */
+        left: 0;
+        top: auto; /* Thay đổi vị trí nếu cần thiết */
+        bottom: 0;
+        margin: 0;
+        padding: 10px;
+        border-right: none; /* Loại bỏ đường viền phân cách nếu cần */
+    }
+
+    main {
+        margin-left: 0; /* Điều chỉnh lại margin khi màn hình nhỏ hơn */
+        padding: 10px;
+    }
+}

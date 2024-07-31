@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Syntax Guide</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <nav id="toc">
+                    <h2>Table of Contents</h2>
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link" href="#question1">Question 1</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#question2">Question 2</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#question3">Question 3</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#question4">Question 4</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#question5">Question 5</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#question6">Question 6</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#question7">Question 7</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#question8">Question 8</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#question9">Question 9</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#question10">Question 10</a></li>                    </ul>
+                </nav>
+            </div>
+            <div class="col-md-9">
+                <header class="text-center">
+                    <h1>SQL Syntax Guide</h1>
+                    <p class="lead">Detailed explanations and examples for SQL queries</p>
+                </header>
+
+                <section id="question1">
+                    <h2>Question 1: SELECT Statement</h2>
+                    <p>Write a query to select customer_id, first_name, last_name, email, street, city display the results in descending order of first_name.</p>
+                    <pre><code>SELECT customer_id, first_name, last_name, email, street, city
+FROM customers
+ORDER BY first_name DESC;</code></pre>
+                    <p>Explanation: This query selects specific columns from the `customers` table and orders the result by `first_name` in descending order.</p>
+                </section>
+
+                <section id="question2">
+                    <h2>Question 2: SELECT Statement</h2>
+                    <p>Write a query to select order_id, order_date, required_date, shipped_date, store_id of all orders which were made in March 2016 and were shipped after the required_date, display the results in ascending order of store_id.</p>
+                    <pre><code>SELECT order_id, order_date, required_date, shipped_date, store_id
+FROM orders
+WHERE YEAR(order_date) = 2016 AND MONTH(order_date) = 3 AND shipped_date > required_date
+ORDER BY store_id ASC;</code></pre>
+                    <p>Explanation: This query selects orders made in March 2016 with specific conditions and orders them by `store_id` in ascending order.</p>
+                </section>
+
+                <section id="question3">
+                    <h2>Question 3: JOIN Statement</h2>
+                    <p>Write a query to display the stocks of products of the 'Surly' brand in the 'Baldwin Bikes' store. Display the results with specific attributes.</p>
+                    <pre><code>SELECT p.product_id, p.product_name, p.model_year, b.brand_name, s.store_name, s.quantity
+FROM products p
+JOIN stocks s ON p.product_id = s.product_id
+JOIN brands b ON p.brand_id = b.brand_id
+JOIN stores s ON s.store_id = s.store_id
+WHERE b.brand_name = 'Surly' AND s.store_name = 'Baldwin Bikes';</code></pre>
+                    <p>Explanation: This query joins multiple tables to fetch stocks of products from a specific brand in a specific store.</p>
+                </section>
+
+                <section id="question4">
+                    <h2>Question 4: Number of Orders in 2018</h2>
+                    <p>Write a query to display store_id, store_name, NumberOfOrdersIn2018 corresponding to each store where NumberOfOrdersIn2018 is the number of orders made in 2018 in each store, display the results by descending order of NumberOfOrdersIn2018.</p>
+                    <pre><code>SELECT s.store_id, s.store_name, COUNT(o.order_id) AS NumberOfOrdersIn2018
+FROM stores s
+LEFT JOIN orders o ON s.store_id = o.store_id
+WHERE YEAR(o.order_date) = 2018
+GROUP BY s.store_id, s.store_name
+ORDER BY NumberOfOrdersIn2018 DESC;</code></pre>
+                    <p>Explanation: This query counts the number of orders made in 2018 for each store and displays the results ordered by the number of orders in descending order.</p>
+                </section>
+
+                <section id="question5">
+                    <h2>Question 5: Customers with Highest NumberOfOrders</h2>
+                    <p>Write a query to display customer_id, first_name, last_name, NumberOfOrders of the customers having the highest NumberOfOrders.</p>
+                    <pre><code>WITH CustomerOrders AS (
+    SELECT c.customer_id, c.first_name, c.last_name, COUNT(o.order_id) AS NumberOfOrders,
+           ROW_NUMBER() OVER (ORDER BY COUNT(o.order_id) DESC) AS OrderRank
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY c.customer_id, c.first_name, c.last_name
+)
+SELECT customer_id, first_name, last_name, NumberOfOrders
+FROM CustomerOrders
+WHERE OrderRank = 1;</code></pre>
+                    <p>Explanation: This query ranks customers by the number of orders they have made and selects the customer with the highest number of orders.</p>
+                </section>
+                   
+                <section id="question6">
+                    <h2>Question 6: Staff with Most Orders per Store</h2>
+                    <p>Write a query to display, for each store, the information of the staff who made the most orders.</p>
+                    <pre><code>WITH StaffOrderCounts AS (
+    SELECT s.store_id, s.staff_id, s.first_name, s.last_name, COUNT(o.order_id) AS NumberOfOrders,
+    ROW_NUMBER() OVER (PARTITION BY s.store_id ORDER BY COUNT(o.order_id) DESC) AS OrderRank
+    FROM staff s
+    JOIN orders o ON s.staff_id = o.staff_id
+    GROUP BY s.store_id, s.staff_id, s.first_name, s.last_name
+)
+SELECT st.store_name, so.staff_id, so.first_name, so.last_name, so.NumberOfOrders
+FROM StaffOrderCounts so
+JOIN stores st ON so.store_id = st.store_id
+WHERE OrderRank = 1;</code></pre>
+                    <p>Explanation: This query identifies the staff member with the most orders per store and displays their information.</p>
+                </section>
+
+                <section id="question7">
+                    <h2>Question 7: Average Price per Brand</h2>
+                    <p>Write a query to select item_id, brand_name, AVG(quantity * list_price) AS Average_Of_Price, display the results with Average_Of_Price greater than 1500 and in descending order of Average_Of_Price.</p>
+                    <pre><code>SELECT item_id, brand_name, AVG(quantity * list_price) AS Average_Of_Price
+FROM items
+GROUP BY item_id, brand_name
+HAVING AVG(quantity * list_price) > 1500
+ORDER BY Average_Of_Price DESC;</code></pre>
+                    <p>Explanation: This query calculates the average price for each brand and filters results where the average price is greater than 1500, ordered in descending order of average price.</p>
+                </section>
+
+                <section id="question8">
+                    <h2>Question 8: Stored Procedure to Count Staffs</h2>
+                    <p>Create a stored procedure named pr1 to calculate the number of staffs in a given store where @store_id int is an input parameter and @numberOfStaffs int is an output parameter of the procedure.</p>
+                    <pre><code>CREATE PROCEDURE pr1
+    @store_id INT,
+    @numberOfStaffs INT OUTPUT
+AS
+BEGIN
+    SELECT @numberOfStaffs = COUNT(*)
+    FROM staff
+    WHERE store_id = @store_id;
+END;</code></pre>
+                    <p>Explanation: This stored procedure counts the number of staff members in a given store and returns the count as an output parameter.</p>
+                </section>
+
+                <section id="question9">
+                    <h2>Question 9: Trigger for Deleting Rows</h2>
+                    <p>Create a trigger named Tr2 for the delete statement on table stocks so that when we delete one or more rows from the table stocks, the system will display the product id, product_name, store_id, store_name, quantity corresponding to the rows that have been deleted.</p>
+                    <pre><code>CREATE TRIGGER Tr2
+ON stocks
+AFTER DELETE
+AS
+BEGIN
+    SELECT d.product_id, p.product_name, d.store_id, s.store_name, d.quantity
+    FROM deleted d
+    JOIN products p ON d.product_id = p.product_id
+    JOIN stores s ON d.store_id = s.store_id;
+END;</code></pre>
+                    <p>Explanation: This trigger captures information about deleted rows from the stocks table including product details and store details.</p>
+                </section>
+
+                <section id="question10">
+                    <h2>Question 10: Update Stock Quantity</h2>
+                    <p>Write a query to update the stock quantity = 30 for all products of the category 'Cruisers Bicycles' in the store with store_id = 1.</p>
+                    <pre><code>UPDATE stocks
+SET quantity = 30
+WHERE product_id IN (
+    SELECT product_id
+    FROM products
+    WHERE category = 'Cruisers Bicycles'
+) AND store_id = 1;</code></pre>
+                    <p>Explanation: This query updates the stock quantity to 30 for all products in the 'Cruisers Bicycles' category in the store with store_id = 1.</p>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
